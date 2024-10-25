@@ -4,9 +4,11 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 
-// Import routes 
+// Import routes
+import authRoutes from './routes/auth.js';
 import userRoutes from './controllers/users.js';
 import profileRoutes from './controllers/profiles.js';
+import testRoutes from './routes/test.js';
 
 const app = express();
 
@@ -21,14 +23,16 @@ try {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
-    console.log('Connected to MongoDB');
+    console.log('📊 Connected to MongoDB');
 } catch (err) {
     console.error('MongoDB connection error:', err);
 }
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/profiles', profileRoutes);
+app.use('/api/test', testRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {
@@ -47,7 +51,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
 
 export default app;
