@@ -1,17 +1,32 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-function verifyToken(req, res, next) {
+const verifyToken = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
+        // Log the entire headers object
+        console.log('All Headers:', req.headers);
+        
+        // Log the authorization header specifically
+        console.log('Auth Header:', req.headers.authorization);
+        
+        const token = req.headers.authorization?.split(' ')[1];
+        console.log('Extracted Token:', token);
+        
+        if (!token) {
+            return res.status(401).json({ message: 'Authentication token required' });
+        }
+
+        // Log JWT secret to make sure it exists (remove in production)
+        console.log('JWT Secret exists:', !!process.env.JWT_SECRET);
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // Assign decoded payload to req.user
+        console.log('Decoded Token:', decoded);
+
         req.user = decoded;
-        // Call next() to invoke the next middleware function
         next();
     } catch (error) {
-        // If any errors, send back a 401 status and an 'Invalid token.' error message
-        res.status(401).json({ error: 'Invalid authorization token.' });
+        console.error('Token Verification Error:', error);
+        return res.status(401).json({ message: 'Invalid or expired token' });
     }
-}
+};
 
-module.exports = verifyToken;
+export default verifyToken;

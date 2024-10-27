@@ -1,26 +1,65 @@
-const dotenv = require('dotenv');
-dotenv.config();
-const cors = require('cors');
-const express = require('express');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+
+// Import routes
+import authRoutes from './routes/auth.js';
+import testRoutes from './routes/test.js';
+import clientRoutes from './routes/client.js';
+import providerRoutes from './routes/provider.js';
+import searchRoutes from './routes/search.js';
+import savedTherapistsRoutes from './routes/savedTherapists.js';
+import messageRoutes from './routes/messages.js';
+import specialtyRoutes from './routes/specialty.js';
+import availabilityRoutes from './routes/availability.js';
+
 const app = express();
-const mongoose = require('mongoose');
-const testJWTRouter = require('./controllers/test-jwt');
-const usersRouter = require('./controllers/users');
-const profilesRouter = require('./controllers/profiles');
 
-mongoose.connect(process.env.MONGODB_URI);
-
-mongoose.connection.on('connected', () => {
-    console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
-});
+// Middleware
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'));
 
-// Routes go here
-app.use('/test-jwt', testJWTRouter);
-app.use('/users', usersRouter);
-app.use('/profiles', profilesRouter);
+// MongoDB Connection
+try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('📊 Connected to MongoDB');
+} catch (err) {
+    console.error('MongoDB connection error:', err);
+}
 
-app.listen(3000, () => {
-    console.log('The express app is ready!');
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/test', testRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/providers', providerRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/saved-therapists', savedTherapistsRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/specialties', specialtyRoutes);
+app.use('/api/availability', availabilityRoutes);
+
+
+// Basic health check route
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
 });
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ 
+        message: 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
+
+export default app;

@@ -1,0 +1,61 @@
+{
+  "specialties": [
+    {
+      "name": "Anxiety & Depression",
+      "description": "Treatment for anxiety disorders and depression",
+      "category": "Mental Health"
+    },
+    {
+      "name": "Family Therapy",
+      "description": "Counseling for families and relationships",
+      "category": "Relationships"
+    },
+    {
+      "name": "Trauma & PTSD",
+      "description": "Support for trauma recovery and PTSD treatment",
+      "category": "Mental Health"
+    },
+    {
+      "name": "Couples Counseling",
+      "description": "Relationship counseling for couples",
+      "category": "Relationships"
+    },
+    {
+      "name": "Teen & Adolescent",
+      "description": "Specialized therapy for teenagers and adolescents",
+      "category": "Age-Specific"
+    },
+    {
+      "name": "Grief & Loss",
+      "description": "Support through grief and loss experiences",
+      "category": "Life Transitions"
+    },
+    {
+      "name": "LGBTQ+",
+      "description": "Affirming therapy for LGBTQ+ individuals",
+      "category": "Identity"
+    },
+    {
+      "name": "Substance Use",
+      "description": "Support for substance use and recovery",
+      "category": "Mental Health"
+    },
+    {
+      "name": "Cultural Identity",
+      "description": "Support for cultural and identity exploration",
+      "category": "Identity"
+    },
+    {
+      "name": "Life Transitions",
+      "description": "Support through major life changes",
+      "category": "Life Transitions"
+    }
+  ],
+  "categories": [
+    "Mental Health",
+    "Relationships",
+    "Identity",
+    "Life Transitions",
+    "Age-Specific"
+  ]
+}

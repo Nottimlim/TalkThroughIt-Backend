@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
+const clientSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -23,29 +23,31 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    userType: {
+    location: {
         type: String,
-        enum: ['client', 'provider'],
         required: true
+    },
+    insuranceProvider: {
+        type: String,
+        required: true
+    },
+    therapyGoals: {
+        type: String
     }
 }, {
     timestamps: true
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+clientSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password, 10);
     next();
 });
 
 // Method to compare passwords
-userSchema.methods.comparePassword = async function(candidatePassword) {
+clientSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+export default mongoose.model('Client', clientSchema);
