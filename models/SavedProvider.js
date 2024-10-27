@@ -10,6 +10,24 @@ const savedProviderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Provider',
         required: true
+    },
+    category: {
+        type: String,
+        enum: [
+            'Favorites',
+            'To Contact',
+            'Currently Seeing',
+            'Past Providers',
+            'Potential Matches',
+            'Insurance Accepted',
+            'Specialized Care',
+            'Other'
+        ],
+        default: 'Potential Matches'
+    },
+    notes: {
+        type: String,
+        maxLength: 500
     }
 }, {
     timestamps: true
