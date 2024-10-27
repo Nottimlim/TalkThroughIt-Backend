@@ -12,6 +12,8 @@ import providerRoutes from './routes/provider.js';
 import searchRoutes from './routes/search.js';
 import savedTherapistsRoutes from './routes/savedTherapists.js';
 import messageRoutes from './routes/messages.js';
+import specialtyRoutes from './routes/specialty.js';
+
 
 const app = express();
 
@@ -36,6 +38,8 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/saved-therapists', savedTherapistsRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/specialties', specialtyRoutes);
+
 
 // Basic health check route
 app.get('/health', (req, res) => {

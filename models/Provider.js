@@ -39,22 +39,10 @@ const providerSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    acceptingClients: {
-        type: Boolean,
-        default: true
-    },
     specialties: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Specialty'
     }],
-    availability: [{
-        day: String,
-        slots: [String]
-    }],
-    profileImage: {
-        type: String,
-        default: ''
-    },
     yearsOfExperience: {
         type: Number,
         required: true
@@ -63,14 +51,10 @@ const providerSchema = new mongoose.Schema({
         type: String,
         default: ['English']
     }],
-    therapyApproaches: [{
-        type: String
-    }],
-    education: [{
-        degree: String,
-        institution: String,
-        year: Number
-    }],
+    acceptingClients: {
+        type: Boolean,
+        default: true
+    },
     licensureState: {
         type: String,
         required: true
@@ -91,7 +75,6 @@ const providerSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Hash password before saving
 providerSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     
@@ -100,7 +83,6 @@ providerSchema.pre('save', async function(next) {
     next();
 });
 
-// Method to compare passwords
 providerSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
