@@ -14,16 +14,17 @@ const messageSchema = new mongoose.Schema({
     senderType: {
         type: String,
         required: true,
-        enum: ['Client', 'Provider']
+        enum: ['Client', 'Provider']  // Changed to capital letters
     },
     receiverType: {
         type: String,
         required: true,
-        enum: ['Client', 'Provider']
+        enum: ['Client', 'Provider']  // Changed to capital letters
     },
     content: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     read: {
         type: Boolean,
