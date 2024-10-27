@@ -6,9 +6,14 @@ import morgan from 'morgan';
 
 // Import routes
 import authRoutes from './routes/auth.js';
-import userRoutes from './controllers/users.js';
-import profileRoutes from './controllers/profiles.js';
 import testRoutes from './routes/test.js';
+import clientRoutes from './routes/client.js';
+import providerRoutes from './routes/provider.js';
+import searchRoutes from './routes/search.js';
+import savedTherapistsRoutes from './routes/savedTherapists.js';
+import messageRoutes from './routes/messages.js';
+import specialtyRoutes from './routes/specialty.js';
+import availabilityRoutes from './routes/availability.js';
 
 const app = express();
 
@@ -19,10 +24,7 @@ app.use(morgan('dev'));
 
 // MongoDB Connection
 try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/talkthrough', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('📊 Connected to MongoDB');
 } catch (err) {
     console.error('MongoDB connection error:', err);
@@ -30,9 +32,15 @@ try {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/profiles', profileRoutes);
 app.use('/api/test', testRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/providers', providerRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/saved-therapists', savedTherapistsRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/specialties', specialtyRoutes);
+app.use('/api/availability', availabilityRoutes);
+
 
 // Basic health check route
 app.get('/health', (req, res) => {

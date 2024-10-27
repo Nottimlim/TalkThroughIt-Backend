@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 const providerSchema = new mongoose.Schema({
     email: {
@@ -36,28 +36,53 @@ const providerSchema = new mongoose.Schema({
         required: true
     },
     insuranceAccepted: [{
-        type: String
+        type: String,
+        required: true
+    }],
+    specialties: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Specialty'
+    }],
+    yearsOfExperience: {
+        type: Number,
+        required: true
+    },
+    languages: [{
+        type: String,
+        default: ['English']
     }],
     acceptingClients: {
         type: Boolean,
         default: true
     },
-    specialties: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Specialty'
-    }]
+    licensureState: {
+        type: String,
+        required: true
+    },
+    licenseNumber: {
+        type: String,
+        required: true
+    },
+    telehealth: {
+        type: Boolean,
+        default: true
+    },
+    inPerson: {
+        type: Boolean,
+        default: true
+    }
 }, {
     timestamps: true
 });
 
-// Hash password before saving
 providerSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10);
+    
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
-// Method to compare passwords
 providerSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
