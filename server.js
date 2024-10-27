@@ -6,9 +6,8 @@ import morgan from 'morgan';
 
 // Import routes
 import authRoutes from './routes/auth.js';
-import userRoutes from './controllers/users.js';
-import profileRoutes from './controllers/profiles.js';
 import testRoutes from './routes/test.js';
+import profileRoutes from './controllers/profiles.js';
 
 const app = express();
 
@@ -19,10 +18,7 @@ app.use(morgan('dev'));
 
 // MongoDB Connection
 try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/talkthrough', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/talkthrough');
     console.log('📊 Connected to MongoDB');
 } catch (err) {
     console.error('MongoDB connection error:', err);
@@ -30,9 +26,8 @@ try {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/profiles', profileRoutes);
 app.use('/api/test', testRoutes);
+app.use('/api/profiles', profileRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {
