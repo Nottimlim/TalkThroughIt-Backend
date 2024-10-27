@@ -7,7 +7,9 @@ import morgan from 'morgan';
 // Import routes
 import authRoutes from './routes/auth.js';
 import testRoutes from './routes/test.js';
-import profileRoutes from './controllers/profiles.js';
+import clientRoutes from './routes/client.js';
+import providerRoutes from './routes/provider.js';
+import searchRoutes from './routes/search.js';
 
 const app = express();
 
@@ -27,7 +29,9 @@ try {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/test', testRoutes);
-app.use('/api/profiles', profileRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/providers', providerRoutes);
+app.use('/api/search', searchRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {

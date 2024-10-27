@@ -36,7 +36,8 @@ const providerSchema = new mongoose.Schema({
         required: true
     },
     insuranceAccepted: [{
-        type: String
+        type: String,
+        required: true
     }],
     acceptingClients: {
         type: Boolean,
@@ -45,7 +46,47 @@ const providerSchema = new mongoose.Schema({
     specialties: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Specialty'
-    }]
+    }],
+    availability: [{
+        day: String,
+        slots: [String]
+    }],
+    profileImage: {
+        type: String,
+        default: ''
+    },
+    yearsOfExperience: {
+        type: Number,
+        required: true
+    },
+    languages: [{
+        type: String,
+        default: ['English']
+    }],
+    therapyApproaches: [{
+        type: String
+    }],
+    education: [{
+        degree: String,
+        institution: String,
+        year: Number
+    }],
+    licensureState: {
+        type: String,
+        required: true
+    },
+    licenseNumber: {
+        type: String,
+        required: true
+    },
+    telehealth: {
+        type: Boolean,
+        default: true
+    },
+    inPerson: {
+        type: Boolean,
+        default: true
+    }
 }, {
     timestamps: true
 });
@@ -53,7 +94,9 @@ const providerSchema = new mongoose.Schema({
 // Hash password before saving
 providerSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10);
+    
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 

@@ -6,64 +6,27 @@ import User from '../models/user.js';
 
 const router = express.Router();
 
-// Original user profile route
-router.get('/:userId', verifyToken, async (req, res) => {
-    try {
-        if (req.user._id !== req.params.userId) {
-            return res.status(401).json({ error: "Unauthorized" });
-        }
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            res.status(404);
-            throw new Error('Profile not found.');
-        }
-        res.json({ user });
-    } catch (error) {
-        if (res.statusCode === 404) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
-    }
-});
-
-// Client profile routes
+// Client profile routes 
 router.get('/clients/:id', verifyToken, async (req, res) => {
     try {
-        if (req.user._id !== req.params.id) {
+        console.log('User from token:', req.user); // Log the user from token
+        console.log('Requested ID:', req.params.id); // Log the requested ID
+        
+        // Compare the string versions of the IDs
+        if (req.user._id.toString() !== req.params.id) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const client = await Client.findById(req.params.id);
-        if (!client) {
-            res.status(404);
-            throw new Error('Client profile not found.');
-        }
-        res.json({ client });
-    } catch (error) {
-        if (res.statusCode === 404) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
-    }
-});
 
-router.put('/clients/:id', verifyToken, async (req, res) => {
-    try {
-        if (req.user._id !== req.params.id) {
-            return res.status(401).json({ error: "Unauthorized" });
-        }
-        const client = await Client.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+        const client = await Client.findById(req.params.id);
+        console.log('Found client:', client); // Log the found client
+
         if (!client) {
             res.status(404);
             throw new Error('Client profile not found.');
         }
         res.json({ client });
     } catch (error) {
+        console.error('Profile fetch error:', error); // Log any errors
         if (res.statusCode === 404) {
             res.status(404).json({ error: error.message });
         } else {
@@ -75,7 +38,7 @@ router.put('/clients/:id', verifyToken, async (req, res) => {
 // Provider profile routes
 router.get('/providers/:id', verifyToken, async (req, res) => {
     try {
-        if (req.user._id !== req.params.id) {
+        if (req.user._id.toString() !== req.params.id) {
             return res.status(401).json({ error: "Unauthorized" });
         }
         const provider = await Provider.findById(req.params.id);
@@ -93,21 +56,18 @@ router.get('/providers/:id', verifyToken, async (req, res) => {
     }
 });
 
-router.put('/providers/:id', verifyToken, async (req, res) => {
+// Original user profile route 
+router.get('/:userId', verifyToken, async (req, res) => {
     try {
-        if (req.user._id !== req.params.id) {
+        if (req.user._id !== req.params.userId) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        const provider = await Provider.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
-        if (!provider) {
+        const user = await User.findById(req.user._id);
+        if (!user) {
             res.status(404);
-            throw new Error('Provider profile not found.');
+            throw new Error('Profile not found.');
         }
-        res.json({ provider });
+        res.json({ user });
     } catch (error) {
         if (res.statusCode === 404) {
             res.status(404).json({ error: error.message });

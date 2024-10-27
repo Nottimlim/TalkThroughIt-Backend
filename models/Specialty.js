@@ -10,6 +10,11 @@ const specialtySchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['Mental Health', 'Relationships', 'Personal Growth', 'Trauma', 'Other']
     }
 }, {
     timestamps: true
