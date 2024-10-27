@@ -13,7 +13,7 @@ import searchRoutes from './routes/search.js';
 import savedTherapistsRoutes from './routes/savedTherapists.js';
 import messageRoutes from './routes/messages.js';
 import specialtyRoutes from './routes/specialty.js';
-
+import availabilityRoutes from './routes/availability.js';
 
 const app = express();
 
@@ -39,6 +39,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/saved-therapists', savedTherapistsRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/specialties', specialtyRoutes);
+app.use('/api/availability', availabilityRoutes);
 
 
 // Basic health check route
