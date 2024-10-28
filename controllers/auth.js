@@ -57,12 +57,18 @@ export const registerProvider = async (req, res) => {
         const { 
             email, 
             password, 
+            passwordConf,
             firstName, 
             lastName, 
             credentials, 
             bio, 
             location, 
-            insuranceAccepted 
+            yearsOfExp,
+            insuranceAccepted,
+            inPerson,
+            telehealth,
+            licensureState,
+
         } = req.body;
 
         const existingProvider = await Provider.findOne({ email });
@@ -71,14 +77,19 @@ export const registerProvider = async (req, res) => {
         }
 
         const provider = new Provider({
-            email,
-            password,
-            firstName,
-            lastName,
-            credentials,
-            bio,
-            location,
-            insuranceAccepted
+            email, 
+            password, 
+            passwordConf,
+            firstName, 
+            lastName, 
+            credentials, 
+            bio, 
+            location, 
+            yearsOfExp,
+            insuranceAccepted,
+            inPerson,
+            telehealth,
+            licensureState,
         });
 
         await provider.save();
