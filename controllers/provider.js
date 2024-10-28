@@ -1,5 +1,14 @@
 import Provider from '../models/Provider.js';
 
+export const getAllProviders = async (req, res) => {
+    try {
+      const providers = await Provider.find(); // Fetch all providers
+      res.json(providers);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 export const getProviderProfile = async (req, res) => {
     try {
         if (req.user._id.toString() !== req.params.id) {
