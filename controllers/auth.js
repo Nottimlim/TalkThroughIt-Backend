@@ -63,11 +63,12 @@ export const registerProvider = async (req, res) => {
             credentials, 
             bio, 
             location, 
-            yearsOfExp,
+            yearsOfExperience,
             insuranceAccepted,
             inPerson,
             telehealth,
             licensureState,
+            licenseNumber, 
 
         } = req.body;
 
@@ -85,11 +86,12 @@ export const registerProvider = async (req, res) => {
             credentials, 
             bio, 
             location, 
-            yearsOfExp,
+            yearsOfExperience,
             insuranceAccepted,
             inPerson,
             telehealth,
             licensureState,
+            licenseNumber,
         });
 
         await provider.save();
