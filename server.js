@@ -30,7 +30,7 @@ try {
     console.error('MongoDB connection error:', err);
 }
 
-// Routes
+// The Routes
 app.use('/auth', authRoutes);
 app.use('/test', testRoutes);
 app.use('/clients', clientRoutes);
