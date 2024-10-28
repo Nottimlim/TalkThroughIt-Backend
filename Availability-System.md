@@ -24,7 +24,7 @@ Availability {
 ### 1. Update Provider Availability
 Set or update a provider's availability schedule.
 
-**Endpoint:** `PUT /api/availability/update`
+**Endpoint:** `PUT /availability/update`
 
 **Headers Required:**
 - `Authorization: Bearer [token]`
@@ -76,7 +76,7 @@ Set or update a provider's availability schedule.
 ### 2. Get Provider's Full Availability
 Retrieve all availability settings for a provider.
 
-**Endpoint:** `GET /api/availability/provider/:providerId`
+**Endpoint:** `GET /availability/provider/:providerId`
 
 **Success Response (200):**
 ```json
@@ -101,7 +101,7 @@ Retrieve all availability settings for a provider.
 ### 3. Get Specific Day's Availability
 Get available time slots for a specific day.
 
-**Endpoint:** `GET /api/availability/provider/:providerId/day/:dayOfWeek`
+**Endpoint:** `GET /availability/provider/:providerId/day/:dayOfWeek`
 
 **Success Response (200):**
 ```json
@@ -146,7 +146,7 @@ Get available time slots for a specific day.
 
 ### 1. Update Provider Availability
 ```http
-PUT http://localhost:5000/api/availability/update
+PUT http://localhost:5000/availability/update
 Authorization: Bearer [provider_token]
 Content-Type: application/json
 
@@ -168,12 +168,12 @@ Content-Type: application/json
 
 ### 2. View Provider's Availability
 ```http
-GET http://localhost:5000/api/availability/provider/[provider_id]
+GET http://localhost:5000/availability/provider/[provider_id]
 ```
 
 ### 3. Check Specific Day
 ```http
-GET http://localhost:5000/api/availability/provider/[provider_id]/day/Monday
+GET http://localhost:5000/availability/provider/[provider_id]/day/Monday
 ```
 
 ## Time Slot Rules

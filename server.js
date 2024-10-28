@@ -31,15 +31,15 @@ try {
 }
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/test', testRoutes);
-app.use('/api/clients', clientRoutes);
-app.use('/api/providers', providerRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/api/saved-therapists', savedTherapistsRoutes);
-app.use('/api/messages', messageRoutes);
-app.use('/api/specialties', specialtyRoutes);
-app.use('/api/availability', availabilityRoutes);
+app.use('/auth', authRoutes);
+app.use('/test', testRoutes);
+app.use('/clients', clientRoutes);
+app.use('/providers', providerRoutes);
+app.use('/search', searchRoutes);
+app.use('/saved-therapists', savedTherapistsRoutes);
+app.use('/messages', messageRoutes);
+app.use('/specialties', specialtyRoutes);
+app.use('/availability', availabilityRoutes);
 
 
 // Basic health check route

@@ -101,7 +101,7 @@ npm start
 
 #### Register Client
 ```http
-POST /api/auth/register/client
+POST /auth/register/client
 Content-Type: application/json
 
 {
@@ -127,7 +127,7 @@ Content-Type: application/json
 
 #### Register Provider
 ```http
-POST /api/auth/register/provider
+POST /auth/register/provider
 Content-Type: application/json
 
 {
@@ -148,19 +148,19 @@ Content-Type: application/json
 
 #### Basic Location Search
 ```http
-GET /api/search/providers?location=New York
+GET /search/providers?location=New York
 ```
 
 #### Advanced Search
 ```http
-GET /api/search/providers?location=New York&insurance=Blue Cross&language=Spanish&specialty=Anxiety&sessionType=telehealth
+GET /search/providers?location=New York&insurance=Blue Cross&language=Spanish&specialty=Anxiety&sessionType=telehealth
 ```
 
 ### SavedTherapists Examples
 
 #### Save Provider
 ```http
-POST /api/saved-therapists
+POST /saved-therapists
 Authorization: Bearer your_token_here
 Content-Type: application/json
 
@@ -175,7 +175,7 @@ Content-Type: application/json
 
 #### Send Message
 ```http
-POST /api/messages
+POST /messages
 Authorization: Bearer your_token_here
 Content-Type: application/json
 
@@ -189,7 +189,7 @@ Content-Type: application/json
 
 #### Set Weekly Availability
 ```http
-PUT /api/availability/update
+PUT /availability/update
 Authorization: Bearer provider_token_here
 Content-Type: application/json
 
