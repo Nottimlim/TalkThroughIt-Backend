@@ -26,7 +26,7 @@ Message {
 #### 1. Send Message
 Send a new message to a client or provider.
 
-**Endpoint:** `POST /api/messages`
+**Endpoint:** `POST /messages`
 
 **Headers Required:**
 - `Authorization: Bearer [token]`
@@ -58,7 +58,7 @@ Send a new message to a client or provider.
 #### 2. Get Conversation History
 Retrieve message history between users.
 
-**Endpoint:** `GET /api/messages/conversation/:otherUserId`
+**Endpoint:** `GET /messages/conversation/:otherUserId`
 
 **Headers Required:**
 - `Authorization: Bearer [token]`
@@ -83,7 +83,7 @@ Retrieve message history between users.
 #### 3. View All Conversations
 Get all conversations for current user.
 
-**Endpoint:** `GET /api/messages/conversations`
+**Endpoint:** `GET /messages/conversations`
 
 **Headers Required:**
 - `Authorization: Bearer [token]`
@@ -113,7 +113,7 @@ Get all conversations for current user.
 #### 4. Mark Messages as Read
 Mark all messages in a conversation as read.
 
-**Endpoint:** `PUT /api/messages/read/:conversationId`
+**Endpoint:** `PUT /messages/read/:conversationId`
 
 **Headers Required:**
 - `Authorization: Bearer [token]`
@@ -152,7 +152,7 @@ Mark all messages in a conversation as read.
 
 ### 1. Send Message as Client
 ```http
-POST http://localhost:5000/api/messages
+POST http://localhost:5000/messages
 Authorization: Bearer [client_token]
 Content-Type: application/json
 
@@ -164,7 +164,7 @@ Content-Type: application/json
 
 ### 2. Send Message as Provider
 ```http
-POST http://localhost:5000/api/messages
+POST http://localhost:5000/messages
 Authorization: Bearer [provider_token]
 Content-Type: application/json
 
@@ -176,13 +176,13 @@ Content-Type: application/json
 
 ### 3. View Conversation
 ```http
-GET http://localhost:5000/api/messages/conversation/[other_user_id]
+GET http://localhost:5000/messages/conversation/[other_user_id]
 Authorization: Bearer [your_token]
 ```
 
 ### 4. View All Conversations
 ```http
-GET http://localhost:5000/api/messages/conversations
+GET http://localhost:5000/messages/conversations
 Authorization: Bearer [your_token]
 ```
 
@@ -263,7 +263,7 @@ Authorization: Bearer [your_token]
      * Confirm receiver is active user
    - **Verification Step:**
      ```http
-     GET /api/search/providers?name=[receiver_name]
+     GET /search/providers?name=[receiver_name]
      // Use to verify correct provider ID
      ```
 
@@ -298,7 +298,7 @@ Authorization: Bearer [your_token]
      * Check network connection
    - **Example Paginated Request:**
      ```http
-     GET /api/messages/conversation/[id]?page=1&limit=20
+     GET /messages/conversation/[id]?page=1&limit=20
      ```
 
 2. Message List Not Updating
@@ -313,7 +313,7 @@ Authorization: Bearer [your_token]
      * Implement polling
    - **Verification Step:**
      ```http
-     GET /api/messages/conversations
+     GET /messages/conversations
      // Check if messages appear in full list
      ```
 
@@ -396,11 +396,11 @@ console.error('Error details:', {
 ### Conversation Not Loading
 ```http
 // Verify conversation ID format
-/api/messages/conversation/valid_mongodb_id
+/messages/conversation/valid_mongodb_id
 ```
 
 ### Read Status Not Updating
 ```http
 // Force read status update
-PUT /api/messages/read/[conversationId]
+PUT /messages/read/[conversationId]
 ```
