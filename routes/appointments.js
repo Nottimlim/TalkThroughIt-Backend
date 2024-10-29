@@ -1,17 +1,19 @@
 import express from 'express';
 import verifyToken from '../middleware/verify-token.js';
-import { 
+import {
     createAppointment,
-    getAppointments,
     updateAppointment,
-    cancelAppointment 
-} from '../controllers/appointments.js';
+    getAppointment,
+    getUpcomingAppointments,
+    cancelAppointment
+} from '../controllers/appointment.js';
 
 const router = express.Router();
 
 router.post('/', verifyToken, createAppointment);
-router.get('/', verifyToken, getAppointments);
+router.get('/upcoming', verifyToken, getUpcomingAppointments);
+router.get('/:id', verifyToken, getAppointment);
 router.put('/:id', verifyToken, updateAppointment);
-router.delete('/:id', verifyToken, cancelAppointment);
+router.post('/:id/cancel', verifyToken, cancelAppointment);
 
 export default router;

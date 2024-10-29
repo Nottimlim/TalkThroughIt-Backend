@@ -1,6 +1,21 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
+const availabilitySlotSchema = new mongoose.Schema({
+    dayOfWeek: {
+        type: Number, // 0-6 (Sunday-Saturday)
+        required: true
+    },
+    startTime: {
+        type: String, // Format: "HH:mm"
+        required: true
+    },
+    endTime: {
+        type: String, // Format: "HH:mm"
+        required: true
+    }
+});
+
 const providerSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -70,7 +85,18 @@ const providerSchema = new mongoose.Schema({
     inPerson: {
         type: Boolean,
         default: true
-    }
+    },
+    availability: [availabilitySlotSchema],
+    
+    clients: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Client'
+    }],
+    
+    appointments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Appointment'
+    }]
 }, {
     timestamps: true
 });
