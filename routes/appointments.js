@@ -2,11 +2,11 @@ import express from 'express';
 import verifyToken from '../middleware/verify-token.js';
 import {
     createAppointment,
-    updateAppointment,
     getAppointment,
     getUpcomingAppointments,
+    updateAppointment,
     cancelAppointment
-} from '../controllers/appointment.js';
+} from '../controllers/appointments.js';
 
 const router = express.Router();
 
