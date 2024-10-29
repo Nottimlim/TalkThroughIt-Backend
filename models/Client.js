@@ -34,7 +34,6 @@ const clientSchema = new mongoose.Schema({
     therapyGoals: {
         type: String
     },
-    // Add these new fields
     savedProviders: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Provider'

@@ -14,6 +14,7 @@ import savedTherapistsRoutes from './routes/savedTherapists.js';
 import messageRoutes from './routes/messages.js';
 import specialtyRoutes from './routes/specialty.js';
 import availabilityRoutes from './routes/availability.js';
+import appointmentRoutes from './routes/appointments.js';
 
 const app = express();
 
@@ -41,7 +42,7 @@ app.use('/messages', messageRoutes);
 app.use('/specialties', specialtyRoutes);
 app.use('/availability', availabilityRoutes);
 app.use('/providers', providerRoutes);
-
+app.use('/appointments', appointmentRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {

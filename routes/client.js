@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.get('/:id', verifyToken, getClientProfile);
-router.put('/:id', verifyToken, updateClientProfile);
 router.get('/dashboard/saved-providers', verifyToken, getSavedProviders);
 router.get('/dashboard/appointments', verifyToken, getClientAppointments);
 router.post('/save-provider', verifyToken, saveProvider);
+router.get('/:id', verifyToken, getClientProfile);
+router.put('/:id', verifyToken, updateClientProfile);
 
 export default router;
