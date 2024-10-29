@@ -1,54 +1,73 @@
 import Client from '../models/Client.js';
 
-export const getClientProfile = async (req, res) => {
+export const getClientProfile = async (req, res) => { /* ... */ };
+export const updateClientProfile = async (req, res) => { /* ... */ };
+
+export const getSavedProviders = async (req, res) => {
     try {
-        console.log('User from token:', req.user);
-        console.log('Requested ID:', req.params.id);
+        console.log('Fetching saved providers for user:', req.user._id);
         
-        if (req.user._id.toString() !== req.params.id) {
-            return res.status(401).json({ error: "Unauthorized" });
-        }
-
-        const client = await Client.findById(req.params.id);
-        console.log('Found client:', client);
-
+        const client = await Client.findById(req.user._id)
+            .populate('savedProviders', 'firstName lastName location insuranceProvider');
+        
         if (!client) {
-            res.status(404);
-            throw new Error('Client profile not found.');
+            return res.status(404).json({ error: 'Client not found' });
         }
-        res.json({ client });
+        
+        console.log('Found saved providers:', client.savedProviders);
+        res.json({ savedProviders: client.savedProviders });
     } catch (error) {
-        console.error('Profile fetch error:', error);
-        if (res.statusCode === 404) {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: error.message });
-        }
+        console.error('Error fetching saved providers:', error);
+        res.status(500).json({ error: error.message });
     }
 };
 
-export const updateClientProfile = async (req, res) => {
+export const getClientAppointments = async (req, res) => {
     try {
-        if (req.user._id.toString() !== req.params.id) {
-            return res.status(401).json({ error: "Unauthorized" });
+        console.log('Fetching appointments for user:', req.user._id);
+        
+        const client = await Client.findById(req.user._id)
+            .populate({
+                path: 'appointments',
+                populate: {
+                    path: 'provider',
+                    select: 'firstName lastName'
+                }
+            });
+        
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
         }
-
-        const updatedClient = await Client.findByIdAndUpdate(
-            req.params.id,
-            {
-                ...req.body,
-                password: undefined,
-                email: undefined
-            },
-            { new: true, runValidators: true }
-        ).select('-password');
-
-        if (!updatedClient) {
-            return res.status(404).json({ message: 'Client not found' });
-        }
-
-        res.json({ client: updatedClient });
+        
+        console.log('Found appointments:', client.appointments);
+        res.json({ appointments: client.appointments });
     } catch (error) {
+        console.error('Error fetching appointments:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Add a function to save a provider
+export const saveProvider = async (req, res) => {
+    try {
+        const { providerId } = req.body;
+        
+        const client = await Client.findById(req.user._id);
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        // Check if provider is already saved
+        if (client.savedProviders.includes(providerId)) {
+            return res.status(400).json({ error: 'Provider already saved' });
+        }
+
+        client.savedProviders.push(providerId);
+        await client.save();
+
+        res.json({ message: 'Provider saved successfully', client });
+    } catch (error) {
+        console.error('Error saving provider:', error);
         res.status(500).json({ error: error.message });
     }
 };
