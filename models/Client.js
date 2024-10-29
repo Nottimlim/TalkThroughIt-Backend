@@ -33,19 +33,27 @@ const clientSchema = new mongoose.Schema({
     },
     therapyGoals: {
         type: String
-    }
+    },
+    // Add these new fields
+    savedProviders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Provider'
+    }],
+    appointments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Appointment'
+    }]
 }, {
     timestamps: true
 });
 
-// Hash password before saving
+// Keep existing password methods
 clientSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 10);
     next();
 });
 
-// Method to compare passwords
 clientSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
