@@ -1,48 +1,42 @@
 import Client from '../models/Client.js';
+import Appointment from '../models/Appointment.js';
 
 export const getClientProfile = async (req, res) => { /* ... */ };
 export const updateClientProfile = async (req, res) => { /* ... */ };
 
 export const getSavedProviders = async (req, res) => {
     try {
-        console.log('Fetching saved providers for user:', req.user._id);
+        console.log('Getting saved providers for user:', req.user._id);
         
         const client = await Client.findById(req.user._id)
-            .populate('savedProviders', 'firstName lastName location insuranceProvider');
+            .populate('savedProviders');
         
         if (!client) {
             return res.status(404).json({ error: 'Client not found' });
         }
-        
-        console.log('Found saved providers:', client.savedProviders);
-        res.json({ savedProviders: client.savedProviders });
+
+        res.json({ savedProviders: client.savedProviders || [] });
     } catch (error) {
-        console.error('Error fetching saved providers:', error);
+        console.error('Error in getSavedProviders:', error);
         res.status(500).json({ error: error.message });
     }
 };
 
 export const getClientAppointments = async (req, res) => {
     try {
-        console.log('Fetching appointments for user:', req.user._id);
-        
-        const client = await Client.findById(req.user._id)
-            .populate({
-                path: 'appointments',
-                populate: {
-                    path: 'provider',
-                    select: 'firstName lastName'
-                }
-            });
-        
-        if (!client) {
-            return res.status(404).json({ error: 'Client not found' });
-        }
-        
-        console.log('Found appointments:', client.appointments);
-        res.json({ appointments: client.appointments });
+        console.log('Fetching appointments for client:', req.user._id);
+
+        // Find appointments directly from Appointment model
+        const appointments = await Appointment.find({
+            client: req.user._id
+        })
+        .populate('provider', 'firstName lastName email')
+        .sort({ datetime: 1 }); // Sort by date ascending
+
+        console.log('Found appointments:', appointments);
+        res.json({ appointments });
     } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error('Error in getClientAppointments:', error);
         res.status(500).json({ error: error.message });
     }
 };
