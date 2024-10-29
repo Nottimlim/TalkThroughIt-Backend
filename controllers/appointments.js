@@ -1,6 +1,4 @@
 import Appointment from '../models/Appointment.js';
-import { sendAppointmentEmail } from '../utils/emailService.js';
-import { scheduleReminder } from '../utils/reminderService.js';
 
 export const createAppointment = async (req, res) => {
     try {
@@ -17,51 +15,9 @@ export const createAppointment = async (req, res) => {
             await appointment.generateMeetingLink();
         }
 
-        // Schedule reminder
-        if (appointment.reminderSettings.email || appointment.reminderSettings.sms) {
-            await scheduleReminder(appointment);
-        }
-
-        // Send confirmation emails
-        await sendAppointmentEmail(appointment, 'created');
-
         res.status(201).json({ appointment });
     } catch (error) {
         console.error('Create appointment error:', error);
-        res.status(500).json({ error: error.message });
-    }
-};
-
-export const updateAppointment = async (req, res) => {
-    try {
-        const appointment = await Appointment.findOne({
-            _id: req.params.id,
-            $or: [
-                { client: req.user._id },
-                { provider: req.user._id }
-            ]
-        });
-
-        if (!appointment) {
-            return res.status(404).json({ error: 'Appointment not found' });
-        }
-
-        // Check cancellation policy
-        if (req.body.status === 'cancelled' && !appointment.canCancel()) {
-            return res.status(400).json({ 
-                error: 'Cannot cancel appointment with less than 24 hours notice' 
-            });
-        }
-
-        Object.assign(appointment, req.body);
-        await appointment.save();
-
-        // Send update notification
-        await sendAppointmentEmail(appointment, 'updated');
-
-        res.json({ appointment });
-    } catch (error) {
-        console.error('Update appointment error:', error);
         res.status(500).json({ error: error.message });
     }
 };
@@ -107,6 +63,37 @@ export const getUpcomingAppointments = async (req, res) => {
     }
 };
 
+export const updateAppointment = async (req, res) => {
+    try {
+        const appointment = await Appointment.findOne({
+            _id: req.params.id,
+            $or: [
+                { client: req.user._id },
+                { provider: req.user._id }
+            ]
+        });
+
+        if (!appointment) {
+            return res.status(404).json({ error: 'Appointment not found' });
+        }
+
+        // Check cancellation policy if status is being changed to cancelled
+        if (req.body.status === 'cancelled' && !appointment.canCancel()) {
+            return res.status(400).json({ 
+                error: 'Cannot cancel appointment with less than 24 hours notice' 
+            });
+        }
+
+        Object.assign(appointment, req.body);
+        await appointment.save();
+
+        res.json({ appointment });
+    } catch (error) {
+        console.error('Update appointment error:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export const cancelAppointment = async (req, res) => {
     try {
         const appointment = await Appointment.findOne({
@@ -130,9 +117,6 @@ export const cancelAppointment = async (req, res) => {
         appointment.status = 'cancelled';
         appointment.cancellationReason = req.body.reason;
         await appointment.save();
-
-        // Send cancellation notification
-        await sendAppointmentEmail(appointment, 'cancelled');
 
         res.json({ appointment });
     } catch (error) {
