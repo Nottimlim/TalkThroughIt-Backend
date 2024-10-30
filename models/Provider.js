@@ -1,32 +1,23 @@
+// TalkThroughIt-Backend/models/Provider.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-
-const availabilitySlotSchema = new mongoose.Schema({
-    dayOfWeek: {
-        type: Number, // 0-6 (Sunday-Saturday)
-        required: true
-    },
-    startTime: {
-        type: String, // Format: "HH:mm"
-        required: true
-    },
-    endTime: {
-        type: String, // Format: "HH:mm"
-        required: true
-    }
-});
 
 const providerSchema = new mongoose.Schema({
     email: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         unique: true,
         trim: true,
-        lowercase: true
+        lowercase: true,
+        match: [
+            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            'Please provide a valid email address'
+        ]
     },
     password: {
         type: String,
-        required: true
+        required: [true, 'Password is required'],
+        minlength: [6, 'Password must be at least 6 character long']
     },
     firstName: {
         type: String,
@@ -55,8 +46,8 @@ const providerSchema = new mongoose.Schema({
         required: true
     }],
     specialties: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Specialty'
+        type: String,
+        required: true
     }],
     yearsOfExperience: {
         type: Number,
@@ -64,12 +55,8 @@ const providerSchema = new mongoose.Schema({
     },
     languages: [{
         type: String,
-        default: ['English']
+        required: true
     }],
-    acceptingClients: {
-        type: Boolean,
-        default: true
-    },
     licensureState: {
         type: String,
         required: true
@@ -78,39 +65,38 @@ const providerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    telehealth: {
-        type: Boolean,
-        default: true
-    },
-    inPerson: {
-        type: Boolean,
-        default: true
-    },
-    availability: [availabilitySlotSchema],
-    
-    clients: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Client'
+    sessionTypes: [{
+        type: String,
+        enum: ['In-Person', 'Video', 'Phone'],
+        required: true
     }],
-    
-    appointments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Appointment'
-    }]
+    acceptingClients: {
+        type: Boolean,
+        default: true
+    }
 }, {
     timestamps: true
 });
 
+// Password hashing middleware
 providerSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
+// Add password comparison method
 providerSchema.methods.comparePassword = async function(candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
 
 export default mongoose.model('Provider', providerSchema);
