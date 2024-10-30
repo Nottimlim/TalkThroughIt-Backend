@@ -54,63 +54,63 @@ export const registerClient = async (req, res) => {
 
 export const registerProvider = async (req, res) => {
     try {
-        const { 
-            email, 
-            password, 
-            passwordConf,
-            firstName, 
-            lastName, 
-            credentials, 
-            bio, 
-            location, 
-            yearsOfExperience,
-            insuranceAccepted,
-            inPerson,
-            telehealth,
-            licensureState,
-            licenseNumber, 
-
-        } = req.body;
-
-        const existingProvider = await Provider.findOne({ email });
-        if (existingProvider) {
-            return res.status(400).json({ message: 'Email already registered' });
-        }
-
-        const provider = new Provider({
-            email, 
-            password, 
-            passwordConf,
-            firstName, 
-            lastName, 
-            credentials, 
-            bio, 
-            location, 
-            yearsOfExperience,
-            insuranceAccepted,
-            inPerson,
-            telehealth,
-            licensureState,
-            licenseNumber,
+        console.log('Provider registration request:', {
+            ...req.body,
+            password: '[HIDDEN]'
         });
 
+        // Validate required fields
+        const requiredFields = [
+            'email',
+            'password',
+            'firstName',
+            'lastName',
+            'credentials',
+            'bio',
+            'location',
+            'insuranceAccepted',
+            'specialties',
+            'yearsOfExperience',
+            'languages',
+            'licensureState',
+            'licenseNumber',
+            'sessionTypes'
+        ];
+
+        for (const field of requiredFields) {
+            if (!req.body[field]) {
+                return res.status(400).json({ 
+                    error: `${field} is required`,
+                    receivedData: field === 'password' ? '[HIDDEN]' : req.body[field]
+                });
+            }
+        }
+
+        // Check if provider already exists
+        const existingProvider = await Provider.findOne({ email: req.body.email });
+        if (existingProvider) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
+
+        // Create new provider
+        const provider = new Provider(req.body);
         await provider.save();
 
+        // Create JWT token
         const token = jwt.sign(
             { 
-                _id: provider._id.toString(),
-                type: 'provider' 
+                _id: provider._id,
+                type: 'provider'
             },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
-        console.log('New Provider ID:', provider._id);
-        console.log('Generated Token Payload:', { _id: provider._id.toString(), type: 'provider' });
-
+        // Return success response
         res.status(201).json({
+            message: 'Provider registered successfully',
             token,
-            user: {
+            provider: {
                 _id: provider._id,
                 email: provider.email,
                 firstName: provider.firstName,
@@ -120,8 +120,11 @@ export const registerProvider = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Registration Error:', error);
-        res.status(500).json({ message: 'Error registering provider', error: error.message });
+        console.error('Provider registration error:', error);
+        res.status(500).json({ 
+            error: 'Registration failed',
+            details: error.message
+        });
     }
 };
 

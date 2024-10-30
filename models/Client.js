@@ -1,3 +1,4 @@
+// TalkThroughIt-Backend/models/Client.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
@@ -46,15 +47,25 @@ const clientSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Keep existing password methods
+// Password hashing middleware
 clientSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
+// Password comparison method
 clientSchema.methods.comparePassword = async function(candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
+    try {
+        return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+        throw error;
+    }
 };
 
 export default mongoose.model('Client', clientSchema);

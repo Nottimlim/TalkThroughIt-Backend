@@ -142,3 +142,66 @@ export const updateProviderAvailability = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export const searchProviders = async (req, res) => {
+    try {
+        const {
+            specialty,
+            insurance,
+            languages,
+            sessionType,
+            gender,
+            location,
+            search
+        } = req.query;
+
+        let query = {};
+
+        // Add filters to query
+        if (specialty) {
+            query.specialties = specialty;
+        }
+        
+        // Handle insurance search
+        if (insurance) {
+            query.insuranceAccepted = insurance;
+        }
+
+        // Handle multiple languages
+        if (languages) {
+            const languageArray = languages.split(',').map(lang => lang.trim());
+            query.languages = { $in: languageArray };
+        }
+
+        if (sessionType) {
+            query.sessionTypes = sessionType;
+        }
+
+        if (gender) {
+            query.gender = gender;
+        }
+
+        // Location search (partial match)
+        if (location) {
+            query.location = new RegExp(location, 'i');
+        }
+
+        // Name search
+        if (search) {
+            query.$or = [
+                { firstName: new RegExp(search, 'i') },
+                { lastName: new RegExp(search, 'i') },
+                { location: new RegExp(search, 'i') }
+            ];
+        }
+
+        const providers = await Provider.find(query)
+            .select('-password')
+            .sort({ createdAt: -1 });
+
+        res.json(providers);
+    } catch (error) {
+        console.error('Provider search error:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
