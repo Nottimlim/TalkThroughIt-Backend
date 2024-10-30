@@ -115,8 +115,6 @@ export const updateClientProfile = async (req, res) => {
     }
 };
 
-// ... rest of your existing code (getSavedProviders, getClientAppointments, saveProvider)
-
 export const getSavedProviders = async (req, res) => {
     try {
         console.log('Getting saved providers for user:', req.user._id);
