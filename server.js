@@ -41,7 +41,6 @@ app.use('/saved-therapists', savedTherapistsRoutes);
 app.use('/messages', messageRoutes);
 app.use('/specialties', specialtyRoutes);
 app.use('/availability', availabilityRoutes);
-app.use('/providers', providerRoutes);
 app.use('/appointments', appointmentRoutes);
 
 // Basic health check route
