@@ -145,48 +145,39 @@ export const updateProviderAvailability = async (req, res) => {
 
 export const searchProviders = async (req, res) => {
     try {
+        console.log('Search query params:', req.query);
+
         const {
             specialty,
             insurance,
             languages,
             sessionType,
-            gender,
             location,
             search
         } = req.query;
 
         let query = {};
 
-        // Add filters to query
         if (specialty) {
             query.specialties = specialty;
         }
         
-        // Handle insurance search
         if (insurance) {
             query.insuranceAccepted = insurance;
         }
 
-        // Handle multiple languages
         if (languages) {
-            const languageArray = languages.split(',').map(lang => lang.trim());
-            query.languages = { $in: languageArray };
+            query.languages = languages; // Changed from array handling to direct match
         }
 
         if (sessionType) {
             query.sessionTypes = sessionType;
         }
 
-        if (gender) {
-            query.gender = gender;
-        }
-
-        // Location search (partial match)
         if (location) {
             query.location = new RegExp(location, 'i');
         }
 
-        // Name search
         if (search) {
             query.$or = [
                 { firstName: new RegExp(search, 'i') },
@@ -195,9 +186,13 @@ export const searchProviders = async (req, res) => {
             ];
         }
 
+        console.log('Final query:', query);
+
         const providers = await Provider.find(query)
             .select('-password')
             .sort({ createdAt: -1 });
+
+        console.log(`Found ${providers.length} providers`);
 
         res.json(providers);
     } catch (error) {
@@ -205,3 +200,4 @@ export const searchProviders = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
