@@ -179,19 +179,18 @@ export const getPublicAvailability = async (req, res) => {
           isAvailable: true,
       }).sort({ dayOfWeek: 1 });
 
-      console.log("Found raw availability:", availability);
+      console.log("Found raw availability:", JSON.stringify(availability, null, 2));
 
-      // Transform the availability data
+      // Transform the availability data with full time slot details
       const availabilityData = availability.map(day => ({
           dayOfWeek: day.dayOfWeek,
           isAvailable: day.isAvailable,
-          timeSlots: day.timeSlots
-              .filter(slot => !slot.isBooked)
-              .map(slot => ({
-                  startTime: slot.startTime,
-                  endTime: slot.endTime,
-                  availableMeetingTypes: slot.availableMeetingTypes
-              }))
+          timeSlots: day.timeSlots.map(slot => ({
+              startTime: slot.startTime,
+              endTime: slot.endTime,
+              isBooked: slot.isBooked,
+              availableMeetingTypes: slot.availableMeetingTypes
+          })).filter(slot => !slot.isBooked) // Only include unbooked slots
       }));
 
       const response = {
@@ -207,14 +206,7 @@ export const getPublicAvailability = async (req, res) => {
           availability: availabilityData
       };
 
-      console.log("Sending formatted response:", {
-          provider: response.provider,
-          availabilityCount: response.availability.length,
-          availabilityDetails: response.availability.map(day => ({
-              day: day.dayOfWeek,
-              slots: day.timeSlots.length
-          }))
-      });
+      console.log("Sending formatted response:", JSON.stringify(response, null, 2));
 
       res.json(response);
   } catch (error) {
@@ -225,6 +217,8 @@ export const getPublicAvailability = async (req, res) => {
       });
   }
 };
+
+
 
 
 
