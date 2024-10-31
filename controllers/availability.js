@@ -86,8 +86,14 @@ export const getDayAvailability = async (req, res) => {
             });
         }
 
-        // Filter out booked slots
-        const availableTimeSlots = availability.timeSlots.filter(slot => !slot.isBooked);
+        // Include meeting types in the response
+        const availableTimeSlots = availability.timeSlots
+            .filter(slot => !slot.isBooked)
+            .map(slot => ({
+                startTime: slot.startTime,
+                endTime: slot.endTime,
+                availableMeetingTypes: slot.availableMeetingTypes
+            }));
 
         res.json({
             providerId,
@@ -102,17 +108,23 @@ export const getDayAvailability = async (req, res) => {
     }
 };
 
+
 // Helper function to validate time slots
 const validateTimeSlots = (timeSlots) => {
     if (!Array.isArray(timeSlots)) return false;
 
     return timeSlots.every(slot => {
         // Check if slot has required properties
-        if (!slot.startTime || !slot.endTime) return false;
+        if (!slot.startTime || !slot.endTime || !slot.availableMeetingTypes) return false;
 
         // Validate time format (HH:MM)
         const timeFormat = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
         if (!timeFormat.test(slot.startTime) || !timeFormat.test(slot.endTime)) return false;
+
+        // Validate meeting types
+        if (!Array.isArray(slot.availableMeetingTypes) || slot.availableMeetingTypes.length === 0) return false;
+        const validMeetingTypes = ['video', 'phone', 'inPerson'];
+        if (!slot.availableMeetingTypes.every(type => validMeetingTypes.includes(type))) return false;
 
         // Ensure end time is after start time
         const [startHour, startMinute] = slot.startTime.split(':').map(Number);
