@@ -176,3 +176,26 @@ export const saveProvider = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+//Updates saved providers to not include the provider
+export const updateSavedProvider = async (req, res) => {
+    try {
+        const { providerId } = req.body;
+        
+        const client = await Client.findById(req.user._id);
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        // Check if provider is already saved
+        const newSavedProviders = client.savedProviders.filter(remove => remove != providerId);
+        
+        client.savedProviders = newSavedProviders
+        await client.save();
+
+        res.json({ message: 'Provider saved successfully', client });
+    } catch (error) {
+        console.error('Error saving provider:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
