@@ -12,7 +12,12 @@ const timeSlotSchema = new mongoose.Schema({
     isBooked: {
         type: Boolean,
         default: false
-    }
+    },
+    availableMeetingTypes: [{
+        type: String,
+        enum: ['video', 'phone', 'inPerson'],
+        required: true
+    }]
 });
 
 const availabilitySchema = new mongoose.Schema({
