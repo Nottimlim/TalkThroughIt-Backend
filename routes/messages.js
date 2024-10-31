@@ -9,13 +9,10 @@ import {
 
 const router = express.Router();
 
-/**
- * Message Routes
- * Handles all routes related to messaging between clients and providers
- */
-
 // Send a message
 router.post('/', verifyToken, sendMessage);
+// conversations
+// router.get('/conversations', verifyToken, getConversations);
 
 // Get specific conversation
 router.get('/conversation/:otherUserId', verifyToken, getConversation);
