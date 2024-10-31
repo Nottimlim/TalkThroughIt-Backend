@@ -13,7 +13,6 @@ export const getProviderAvailability = async (req, res) => {
 
     console.log("Backend - Found availability:", availability);
 
-    // Return empty array if no records found (this is correct behavior)
     res.json({
       providerId,
       availability: availability || [],
@@ -80,12 +79,17 @@ export const updateAvailability = async (req, res) => {
 export const getDayAvailability = async (req, res) => {
   try {
     const { providerId, dayOfWeek } = req.params;
+    const { date } = req.query;
+
+    console.log("Getting availability for:", { providerId, dayOfWeek, date });
 
     const availability = await Availability.findOne({
       providerId,
       dayOfWeek,
       isAvailable: true,
     });
+
+    console.log("Backend - Raw availability data:", availability);
 
     if (!availability) {
       return res.json({
@@ -105,6 +109,8 @@ export const getDayAvailability = async (req, res) => {
         availableMeetingTypes: slot.availableMeetingTypes,
       }));
 
+    console.log("Backend - Processed time slots:", availableTimeSlots);
+
     res.json({
       providerId,
       dayOfWeek,
@@ -112,13 +118,11 @@ export const getDayAvailability = async (req, res) => {
       timeSlots: availableTimeSlots,
     });
   } catch (error) {
-    console.error("Get Day Availability Error:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error retrieving day availability",
-        error: error.message,
-      });
+    console.error("Backend - Get Day Availability Error:", error);
+    res.status(500).json({
+      message: "Error retrieving day availability",
+      error: error.message,
+    });
   }
 };
 
@@ -159,3 +163,68 @@ const validateTimeSlots = (timeSlots) => {
     return endMinutes > startMinutes;
   });
 };
+
+export const getPublicAvailability = async (req, res) => {
+  try {
+      const { providerId } = req.params;
+      console.log("Backend - Fetching availability for provider:", providerId);
+
+      const provider = await Provider.findById(providerId);
+      if (!provider) {
+          return res.status(404).json({ message: "Provider not found" });
+      }
+
+      const availability = await Availability.find({
+          providerId,
+          isAvailable: true,
+      }).sort({ dayOfWeek: 1 });
+
+      console.log("Found raw availability:", availability);
+
+      // Transform the availability data
+      const availabilityData = availability.map(day => ({
+          dayOfWeek: day.dayOfWeek,
+          isAvailable: day.isAvailable,
+          timeSlots: day.timeSlots
+              .filter(slot => !slot.isBooked)
+              .map(slot => ({
+                  startTime: slot.startTime,
+                  endTime: slot.endTime,
+                  availableMeetingTypes: slot.availableMeetingTypes
+              }))
+      }));
+
+      const response = {
+          provider: {
+              _id: provider._id,
+              firstName: provider.firstName,
+              lastName: provider.lastName,
+              title: provider.title,
+              credentials: provider.credentials,
+              location: provider.location,
+              profileImage: provider.profileImage
+          },
+          availability: availabilityData
+      };
+
+      console.log("Sending formatted response:", {
+          provider: response.provider,
+          availabilityCount: response.availability.length,
+          availabilityDetails: response.availability.map(day => ({
+              day: day.dayOfWeek,
+              slots: day.timeSlots.length
+          }))
+      });
+
+      res.json(response);
+  } catch (error) {
+      console.error("Get Public Availability Error:", error);
+      res.status(500).json({
+          message: "Error retrieving availability",
+          error: error.message
+      });
+  }
+};
+
+
+
