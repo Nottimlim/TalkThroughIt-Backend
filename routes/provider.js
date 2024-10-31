@@ -3,7 +3,7 @@ import verifyToken from '../middleware/verify-token.js';
 import { 
     getProviderProfile, 
     updateProviderProfile, 
-    getAllProviders,
+    searchProviders,
     getProviderClients,
     getProviderAppointments,
     getProviderAvailability,
@@ -18,6 +18,6 @@ router.get('/dashboard/availability', verifyToken, getProviderAvailability);
 router.post('/dashboard/availability', verifyToken, updateProviderAvailability);
 router.get('/:id', verifyToken, getProviderProfile);
 router.put('/:id', verifyToken, updateProviderProfile);
-router.get('/', getAllProviders);
+router.get('/', searchProviders);
 
 export default router;
