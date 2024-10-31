@@ -7,7 +7,7 @@ import {
     markAsRead
 } from '../controllers/messages.js';
 
-const router = express.Router();
+const   router = express.Router();
 
 // Send a message
 router.post('/', verifyToken, sendMessage);

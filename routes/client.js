@@ -5,7 +5,8 @@ import {
     updateClientProfile,
     getSavedProviders,
     getClientAppointments,
-    saveProvider
+    saveProvider,
+    updateSavedProvider
 } from '../controllers/client.js';
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.put('/profile', verifyToken, updateClientProfile);
 
 // Provider interaction routes
 router.post('/save-provider', verifyToken, saveProvider);
+router.put('/save-provider', verifyToken, updateSavedProvider);
 
 
 export default router;
