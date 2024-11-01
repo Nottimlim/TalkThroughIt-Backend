@@ -135,22 +135,38 @@ export const getSavedProviders = async (req, res) => {
 
 export const getClientAppointments = async (req, res) => {
     try {
-        console.log('Fetching appointments for client:', req.user._id);
+        console.log('getClientAppointments called for client:', req.user._id);
 
-        // Find appointments directly from Appointment model
         const appointments = await Appointment.find({
             client: req.user._id
         })
         .populate('provider', 'firstName lastName email')
-        .sort({ datetime: 1 }); // Sort by date ascending
+        .sort({ datetime: 1 });
 
         console.log('Found appointments:', appointments);
-        res.json({ appointments });
+
+        // Send response with cache control headers
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        
+        res.status(200).json({
+            success: true,
+            appointments: appointments,
+            count: appointments.length,
+            message: `Found ${appointments.length} appointments`
+        });
+
     } catch (error) {
         console.error('Error in getClientAppointments:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 };
+
+
 
 // Add a function to save a provider
 export const saveProvider = async (req, res) => {
