@@ -12,14 +12,14 @@ export const getAllProviders = async (req, res) => {
 
 export const getProviderProfile = async (req, res) => {
     try {
-        if (req.user._id.toString() !== req.params.id) {
-            return res.status(401).json({ error: "Unauthorized" });
-        }
+        // if (req.user._id.toString() !== req.params.id) {
+        //     return res.status(401).json({ error: "Unauthorized" });
+        // }
         const provider = await Provider.findById(req.params.id);
-        if (!provider) {
-            res.status(404);
-            throw new Error('Provider profile not found.');
-        }
+        // if (!provider) {
+        //     res.status(404);
+        //     throw new Error('Provider profile not found.');
+        // }
         res.json({ provider });
     } catch (error) {
         if (res.statusCode === 404) {

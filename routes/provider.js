@@ -20,4 +20,5 @@ router.get('/:id', verifyToken, getProviderProfile);
 router.put('/:id', verifyToken, updateProviderProfile);
 router.get('/', searchProviders);
 
+
 export default router;

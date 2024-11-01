@@ -7,15 +7,12 @@ import {
     markAsRead
 } from '../controllers/messages.js';
 
-const router = express.Router();
-
-/**
- * Message Routes
- * Handles all routes related to messaging between clients and providers
- */
+const   router = express.Router();
 
 // Send a message
 router.post('/', verifyToken, sendMessage);
+// conversations
+// router.get('/conversations', verifyToken, getConversations);
 
 // Get specific conversation
 router.get('/conversation/:otherUserId', verifyToken, getConversation);

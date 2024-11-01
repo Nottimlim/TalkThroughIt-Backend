@@ -4,18 +4,17 @@ import { isProvider } from '../middleware/roleCheck.js';
 import {
     getProviderAvailability,
     updateAvailability,
-    getDayAvailability
+    getDayAvailability,
+    getPublicAvailability,
 } from '../controllers/availability.js';
 
 const router = express.Router();
 
-// Get provider's full availability
-router.get('/provider/:providerId', getProviderAvailability);
+// Public routes (no auth needed)
+router.get('/provider/:providerId', getProviderAvailability);  // Get all availability
+router.get('/provider/:providerId/day/:dayOfWeek', getDayAvailability);  // Get specific day
+router.get('/provider/:providerId/public', getPublicAvailability);  // Get formatted public view
 
-// Get specific day's availability
-router.get('/provider/:providerId/day/:dayOfWeek', getDayAvailability);
-
-// Update provider's availability (protected route)
-router.put('/update', verifyToken, isProvider, updateAvailability);
-
+// Protected routes (provider only)
+router.put('/update', verifyToken, isProvider, updateAvailability);  // Update availability
 export default router;
