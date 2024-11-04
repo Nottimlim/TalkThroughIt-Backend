@@ -1,28 +1,31 @@
 import cors from 'cors';
 
 const allowedOrigins = [
-    'https://talkthroughit.netlify.app',    // Production frontend
-    'http://localhost:5173',                // Vite dev server
-    'http://localhost:3000'                 // Local backend
+    'https://talkthroughit.netlify.app',
+    'https://talkthroughit-backend-c427d84ad4cc.herokuapp.com',
+    'http://localhost:5173',
+    'http://localhost:3000'
 ];
 
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.log('Blocked by CORS:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
+// Simple middleware to add required CORS headers
+const addCorsHeaders = (req, res, next) => {
+    const origin = req.headers.origin;
+    
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+        res.setHeader('Access-Control-Max-Age', '3600');
+    }
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    next();
 };
 
-const corsMiddleware = cors(corsOptions);
-
-export default corsMiddleware;
+export default addCorsHeaders;
