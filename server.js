@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
+import addCorsHeaders from './middleware/cors.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import testRoutes from './routes/test.js';
@@ -17,13 +18,10 @@ import appointmentRoutes from './routes/appointments.js';
 
 const app = express();
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
+
 
 // Middleware
-app.use(cors());
+app.use(addCorsHeaders);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
