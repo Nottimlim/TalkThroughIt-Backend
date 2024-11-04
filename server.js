@@ -4,7 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import corsMiddleware from './middleware/cors.js';
-
+import addCorsHeaders from './middleware/cors.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import testRoutes from './routes/test.js';
@@ -20,9 +20,10 @@ import appointmentRoutes from './routes/appointments.js';
 const app = express();
 
 // Middleware
+app.use(addCorsHeaders);
 app.use(cors());
-app.use(corsMiddleware);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
 
