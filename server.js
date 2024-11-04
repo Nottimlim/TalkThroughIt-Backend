@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
-import corsMiddleware from './middleware/cors.js';
+import addCorsHeaders from './middleware/cors.js';
 // Import routes
 import authRoutes from './routes/auth.js';
 import testRoutes from './routes/test.js';
@@ -19,7 +19,7 @@ import appointmentRoutes from './routes/appointments.js';
 const app = express();
 
 // Middleware
-app.use(corsMiddleware);
+app.use(addCorsHeaders);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -43,7 +43,6 @@ app.use('/messages', messageRoutes);
 app.use('/specialties', specialtyRoutes);
 app.use('/availability', availabilityRoutes);
 app.use('/appointments', appointmentRoutes);
-app.options('*', corsMiddleware);
 
 // Basic health check route
 app.get('/health', (req, res) => {
