@@ -2,9 +2,11 @@ import cors from 'cors';
 
 const allowedOrigins = [
     'https://talkthroughit.netlify.app',    // Production frontend
+    'https://talkthroughit-backend-c427d84ad4cc.herokuapp.com', // Heroku backend
     'http://localhost:5173',                // Vite dev server
     'http://localhost:3000'                 // Local backend
 ];
+
 
 const corsOptions = {
     origin: function (origin, callback) {
