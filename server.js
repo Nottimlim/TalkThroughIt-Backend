@@ -21,9 +21,10 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(corsMiddleware);
+
 
 // MongoDB Connection
 mongoose
