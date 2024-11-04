@@ -18,10 +18,9 @@ import appointmentRoutes from './routes/appointments.js';
 
 const app = express();
 
-
-
 // Middleware
 app.use(addCorsHeaders);
+app.use(cors()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));

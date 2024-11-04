@@ -1,5 +1,3 @@
-import cors from 'cors';
-
 const allowedOrigins = [
     'https://talkthroughit.netlify.app',
     'https://talkthroughit-backend-c427d84ad4cc.herokuapp.com',
@@ -7,22 +5,22 @@ const allowedOrigins = [
     'http://localhost:3000'
 ];
 
-// Simple middleware to add required CORS headers
 const addCorsHeaders = (req, res, next) => {
     const origin = req.headers.origin;
     
-    // Check if origin is allowed
     if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-        res.setHeader('Access-Control-Max-Age', '3600');
+        // Set CORS headers
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header('Access-Control-Max-Age', '3600');
     }
 
-    // Handle preflight
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+        res.sendStatus(200);
+        return;
     }
 
     next();
