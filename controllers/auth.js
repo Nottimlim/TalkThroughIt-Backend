@@ -162,6 +162,9 @@ export const login = async (req, res) => {
       {
         _id: user._id.toString(),
         type: userType,
+        firstName: user.firstName,  
+        lastName: user.lastName,    
+        email: user.email            
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
@@ -171,6 +174,9 @@ export const login = async (req, res) => {
     console.log("Generated Token Payload:", {
       _id: user._id.toString(),
       type: userType,
+      firstName: user.firstName,    
+      lastName: user.lastName,   
+      email: user.email          
     });
 
     res.json({
