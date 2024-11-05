@@ -58,55 +58,33 @@ export const saveProvider = async (req, res) => {
  */
 export const getSavedProviders = async (req, res) => {
   try {
-    const clientId = req.user._id;
-    console.log("Getting saved providers for client:", clientId);
+      const clientId = req.user._id;
+      console.log("Getting saved providers for client:", clientId);
 
-    // Find all saved relationships and populate provider details
-    const savedProviders = await SavedProvider.find({ clientId }).populate({
-      path: "providerId",
-      select: "-password -email",
-      model: "Provider",
-    });
+      // Find all saved relationships and populate provider details
+      const savedProviders = await SavedProvider.find({ clientId })
+          .populate({
+              path: 'providerId',
+              select: 'firstName lastName credentials location specialties languages insuranceAccepted sessionTypes bio acceptingClients',
+              model: 'Provider'
+          });
 
-    console.log(
-      "Found saved providers:",
-      savedProviders.map((sp) => ({
-        id: sp._id,
-        providerId: sp.providerId._id,
-      }))
-    );
+      console.log("Found saved providers:", savedProviders);
 
-    const formattedProviders = savedProviders.map((saved) => ({
-      savedId: saved._id,
-      category: saved.category || "Potential Matches",
-      notes: saved.notes,
-      provider: {
-        id: saved.providerId._id,
-        name: `${saved.providerId.firstName} ${saved.providerId.lastName}`,
-        credentials: saved.providerId.credentials,
-        location: saved.providerId.location,
-        specialties: saved.providerId.specialties,
-        languages: saved.providerId.languages,
-        insuranceAccepted: saved.providerId.insuranceAccepted,
-        sessionTypes: {
-          telehealth: saved.providerId.telehealth,
-          inPerson: saved.providerId.inPerson,
-        },
-      },
-      savedAt: saved.createdAt,
-    }));
+      const formattedProviders = savedProviders.map(saved => ({
+          id: saved._id,
+          providerId: saved.providerId,  // This will contain the full provider object
+          category: saved.category || "Potential Matches",
+          notes: saved.notes,
+          savedAt: saved.createdAt
+      }));
 
-    res.json({
-      count: formattedProviders.length,
-      savedProviders: formattedProviders,
-    });
+      res.json(formattedProviders);
   } catch (error) {
-    console.error("Get Saved Providers Error:", error);
-    res
-      .status(500)
-      .json({
-        message: "Error retrieving saved providers",
-        error: error.message,
+      console.error("Get Saved Providers Error:", error);
+      res.status(500).json({ 
+          message: "Error retrieving saved providers", 
+          error: error.message 
       });
   }
 };
