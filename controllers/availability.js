@@ -25,55 +25,68 @@ export const getProviderAvailability = async (req, res) => {
   }
 };
 
-// Update provider's availability
 export const updateAvailability = async (req, res) => {
   try {
-    const providerId = req.user._id; // From auth token
-    const { availabilityData } = req.body;
+      console.log('Received update request body:', JSON.stringify(req.body, null, 2));
+      console.log('Provider ID from token:', req.user._id);
 
-    // Validate provider
-    const provider = await Provider.findById(providerId);
-    if (!provider) {
-      return res.status(404).json({ message: "Provider not found" });
-    }
+      const providerId = req.user._id; // From auth token
+      const { availabilityData } = req.body;
 
-    // Validate availability data structure
-    if (!Array.isArray(availabilityData)) {
-      return res
-        .status(400)
-        .json({ message: "Invalid availability data format" });
-    }
-
-    // Process each day's availability
-    const availabilityPromises = availabilityData.map(async (dayData) => {
-      const { dayOfWeek, timeSlots, isAvailable } = dayData;
-
-      // Validate time slots
-      if (timeSlots && !validateTimeSlots(timeSlots)) {
-        throw new Error(`Invalid time slots for ${dayOfWeek}`);
+      if (!availabilityData || !Array.isArray(availabilityData)) {
+          console.log('Invalid data format received:', availabilityData);
+          return res.status(400).json({ 
+              message: "Invalid availability data format",
+              received: availabilityData 
+          });
       }
 
-      // Update or create availability for the day
-      return await Availability.findOneAndUpdate(
-        { providerId, dayOfWeek },
-        { timeSlots, isAvailable },
-        { upsert: true, new: true }
-      );
-    });
+      // Validate provider
+      const provider = await Provider.findById(providerId);
+      if (!provider) {
+          return res.status(404).json({ message: "Provider not found" });
+      }
 
-    const updatedAvailability = await Promise.all(availabilityPromises);
+      // Process each day's availability
+      const availabilityPromises = availabilityData.map(async (dayData) => {
+          console.log('Processing day data:', dayData);
+          
+          const { dayOfWeek, timeSlots, isAvailable } = dayData;
 
-    res.json({
-      message: "Availability updated successfully",
-      availability: updatedAvailability,
-    });
+          // Additional validation
+          if (!dayOfWeek || !timeSlots || !Array.isArray(timeSlots)) {
+              throw new Error(`Invalid data structure for ${dayOfWeek}`);
+          }
+
+          // Update or create availability for the day
+          return await Availability.findOneAndUpdate(
+              { providerId, dayOfWeek },
+              { 
+                  timeSlots, 
+                  isAvailable,
+                  providerId // ensure providerId is set
+              },
+              { upsert: true, new: true }
+          );
+      });
+
+      const updatedAvailability = await Promise.all(availabilityPromises);
+      console.log('Updated availability:', updatedAvailability);
+
+      res.json({
+          message: "Availability updated successfully",
+          availability: updatedAvailability
+      });
   } catch (error) {
-    console.error("Update Availability Error:", error);
-    res
-      .status(500)
-      .json({ message: "Error updating availability", error: error.message });
+      console.error("Update Availability Error:", error);
+      res.status(500).json({ 
+          message: "Error updating availability", 
+          error: error.message,
+          stack: error.stack 
+      });
   }
 };
+
 
 // Get available time slots for a specific day
 export const getDayAvailability = async (req, res) => {
