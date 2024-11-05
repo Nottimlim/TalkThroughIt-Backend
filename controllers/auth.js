@@ -111,8 +111,11 @@ export const registerProvider = async (req, res) => {
     // Create JWT token
     const token = jwt.sign(
       {
-        _id: provider._id,
-        type: "provider",
+        _id: user._id.toString(),
+        type: userType,
+        firstName: user.firstName,  
+        lastName: user.lastName,    
+        email: user.email        
       },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
