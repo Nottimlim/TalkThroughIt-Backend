@@ -67,19 +67,12 @@ export const getSavedProviders = async (req, res) => {
               path: 'providerId',
               select: 'firstName lastName credentials location specialties languages insuranceAccepted sessionTypes bio acceptingClients',
               model: 'Provider'
-          });
+          })
+          .lean(); // Add this to convert to plain JavaScript object
 
-      console.log("Found saved providers:", savedProviders);
+      console.log("Full provider data:", JSON.stringify(savedProviders, null, 2));
 
-      const formattedProviders = savedProviders.map(saved => ({
-          id: saved._id,
-          providerId: saved.providerId,  // This will contain the full provider object
-          category: saved.category || "Potential Matches",
-          notes: saved.notes,
-          savedAt: saved.createdAt
-      }));
-
-      res.json(formattedProviders);
+      res.json(savedProviders);
   } catch (error) {
       console.error("Get Saved Providers Error:", error);
       res.status(500).json({ 
@@ -88,6 +81,7 @@ export const getSavedProviders = async (req, res) => {
       });
   }
 };
+
 
 /**
  * Update saved provider category or notes
